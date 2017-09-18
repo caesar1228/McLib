@@ -32,26 +32,32 @@ namespace McLib {
 			::GetWindowText(hwnd, strWindowText.GetBuffer(256), 256);
 			wininfodetail.strWindowText = strWindowText;
 
-			//窗口的位置
-			//RECT winRect;
-			//GetWindowRect(hwnd, &winRect);
-			//wininfodetail.winRect = winRect;
-			WINDOWPLACEMENT wndpl;
-			GetWindowPlacement(hwnd, &wndpl);
-			wininfodetail.winRect = wndpl.rcNormalPosition;
-
+			BOOL is_max_ = FALSE;
 			//判断窗口状态
-			if (::IsIconic(hwnd))
+			if (::IsZoomed(hwnd))
 			{
-				wininfodetail.strWindowStatus = _T("最小化");
-				//WINDOWPLACEMENT wndpl;
-				//GetWindowPlacement(hwnd, &wndpl);
-				//wininfodetail.winRect = wndpl.rcNormalPosition;
-			}
-			else if (::IsZoomed(hwnd))
 				wininfodetail.strWindowStatus = _T("最大化");
+				is_max_ = TRUE;
+				
+			}
+			else if (::IsIconic(hwnd))
+				wininfodetail.strWindowStatus = _T("最小化");
 			else
 				wininfodetail.strWindowStatus = _T("普通窗口");
+
+			//窗口的位置
+			if (is_max_)
+			{
+				RECT winRect;
+				GetWindowRect(hwnd, &winRect);
+				wininfodetail.winRect = winRect;
+			} 
+			else
+			{
+				WINDOWPLACEMENT wndpl;
+				GetWindowPlacement(hwnd, &wndpl);
+				wininfodetail.winRect = wndpl.rcNormalPosition;
+			}
 
 			//获得窗口类名
 			CString strClassName = _T("");
